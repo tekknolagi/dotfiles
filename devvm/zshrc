@@ -120,3 +120,6 @@ export PATH="$HOME/n/bin:$PATH"
 export PATH="$PATH:$HOME/.rvm/bin"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+ZSH_COMMAND_TIME_EXCLUDE=(vim nvim fg)
+source ~/.zsh-time
