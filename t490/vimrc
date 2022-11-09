@@ -286,3 +286,10 @@ let g:ctrlp_user_command = {
     \ },
   \ 'fallback': 'find %s -type f'
   \ }
+  
+  " un fuck switch case indentation in C
+set cinoptions=l1
+
+" open file browser
+nnoremap <silent> - :Explore<CR>
+
