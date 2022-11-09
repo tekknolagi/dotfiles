@@ -1,0 +1,18 @@
+[url "https://github.com/"]
+	insteadOf = git://github.com/
+[init]
+	defaultBranch = trunk
+[alias]
+	recent = ! git branch --sort=-committerdate --format=\"%(committerdate:relative)%09%(refname:short)\" | head -10
+  smartlog = ! git log $(git branch --show-current) --not origin/cinder/3.8 --not origin/cinder/3.10 --graph --pretty=format:'commit: %C(bold red)%h%Creset %C(red)[%H]%Creset %C(bold magenta)%d %Creset%ndate: %C(bold yellow)%cd %Creset%C(yellow)%cr%Creset%nauthor: %C(bold blue)%an%Creset %C(blue)[%ae]%Creset%n%C(cyan)%s%n%Creset'
+  ssl = !git smartlog
+  # parent = "!git show-branch | grep '*' | grep -v \"$(git rev-parse --abbrev-ref HEAD)\" | head -n1 | sed 's/.*\\[\\(.*\\)\\].*/\\1/' | sed 's/[\\^~].*//' #"
+[commit]
+	template = /home/emacs/.gitmessage
+# [core]
+# 	autocrlf = input
+#	safecrlf = false
+[core]
+	excludesfile = /home/emacs/.gitignore
+[trailer "diff"]
+	key = Differential Revision
