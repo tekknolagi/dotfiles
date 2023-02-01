@@ -1,0 +1,54 @@
+# Any items in the `env` entry below will be added as
+# environment variables. Some entries may override variables
+# set by alacritty itself.
+env:
+  # TERM variable
+  #
+  # This value is used to set the `$TERM` environment variable for
+  # each instance of Alacritty. If it is not present, alacritty will
+  # check the local terminfo database and use `alacritty` if it is
+  # available, otherwise `xterm-256color` is used.
+  TERM: xterm-256color
+
+window:
+  padding:
+    x: 6
+    y: 6
+
+font:
+  # defaults write org.alacritty AppleFontSmoothing -int 0
+  # defaults write org.alacritty CGFontRenderingFontSmoothingDisabled -bool NO
+  # use_thin_strokes: true
+  size: 14
+  normal:
+    family: Monaco
+
+# Colors (Gruvbox Material Dark Medium)
+colors:
+  primary:
+    background: '0x282828'
+    foreground: '0xdfbf8e'
+
+  normal:
+    black:   '0x665c54'
+    red:     '0xea6962'
+    green:   '0xa9b665'
+    yellow:  '0xe78a4e'
+    blue:    '0x7daea3'
+    magenta: '0xd3869b'
+    cyan:    '0x89b482'
+    white:   '0xdfbf8e'
+
+  bright:
+    black:   '0x928374'
+    red:     '0xea6962'
+    green:   '0xa9b665'
+    yellow:  '0xe3a84e'
+    blue:    '0x7daea3'
+    magenta: '0xd3869b'
+    cyan:    '0x89b482'
+    white:   '0xdfbf8e'
+
+# C-l to refresh screen
+key_bindings:
+  - { key: L, mods: Control, chars: "\x0c" }
