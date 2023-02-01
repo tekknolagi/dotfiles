@@ -1,0 +1,154 @@
+# zmodload zsh/zprof
+set -o emacs
+
+alias vim=nvim
+alias g=git
+# alias git.real=git
+# alias opam="http_proxy=http://fwdproxy:8080 https_proxy=http://fwdproxy:8080 opam"
+alias tmux="TERM=screen-256color tmux"
+alias gdb="rlwrap gdb -q"
+function runtest() {
+    ./python-tests --hide_success --gtest_filter="${1}"
+}
+function debugtest() {
+    gdb --args ./python-tests --hide_success --gtest_filter="${1}"
+}
+function pyfmt() {
+  fmt_yapf.py -i "${1}"
+}
+
+# Use emacs keybindings even if our EDITOR is set to vi
+bindkey -e
+bindkey '^[[1;5D' backward-word
+bindkey '^[[1;5C' forward-word
+
+# C-x C-e to edit command
+autoload -U edit-command-line
+bindkey '^xe' edit-command-line
+bindkey '^x^e' edit-command-line
+
+export EDITOR=vim
+export PROMPT="$(echo $HOSTNAME | cut -f1,2 -d.)%% "
+export TERMINFO=/etc/terminfo
+export NVIM_GTK_NO_HEADERBAR=1
+export NVIM_GTK_NO_WINDOW_DECORATION=1
+export PYTHONSTARTUP="$HOME/.pythonrc.py"
+export XDG_CURRENT_DESKTOP=GNOME
+
+# OPAM configuration
+# NOTE: Re-enable on-demand since it's slow.
+# . /home/emacs/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
+
+export HISTFILE=$HOME/.zsh_history
+export HISTSIZE=999999999999999999
+export SAVEHIST=$HISTSIZE
+
+## History command configuration
+setopt extended_history       # record timestamp of command in HISTFILE
+setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt hist_ignore_dups       # ignore duplicated commands history list
+setopt hist_ignore_space      # ignore commands that start with space
+setopt hist_verify            # show command with history expansion to user before running it
+setopt inc_append_history     # add commands to HISTFILE in order of execution
+setopt share_history          # share command history data
+
+setopt interactivecomments
+
+if [[ $TERM == xterm ]]; then TERM=xterm-256color; fi
+
+# Set up the prompt
+
+autoload -Uz promptinit
+fpath=( "$HOME/.zprompts" $fpath )
+promptinit
+# prompt max
+
+setopt histignorealldups sharehistory
+
+# Use modern completion system
+autoload -Uz compinit
+compinit
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+zstyle ':completion:*' auto-description 'specify: %d'
+# TODO(emacs): Re-enable this, but figure out how to make it faster. Takes too
+# long on shell startup.
+# zstyle ':completion:*' completer _expand _complete # _correct # _approximate
+# TODO(emacs): Figure out why this is commented.
+# zstyle ':completion:*' format 'Completing %d'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' menu select=2
+eval "$(dircolors -b)"
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
+zstyle ':completion:*' menu select=long
+zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+zstyle ':completion:*' use-compctl false
+zstyle ':completion:*' verbose true
+
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    export PATH="$HOME/bin:$PATH"
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/usr/bin" ] ; then
+    export PATH="$HOME/.local/usr/bin:$PATH"
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/go/bin" ] ; then
+    PATH="$HOME/go/bin:$PATH"
+fi
+
+export PATH="$HOME/.cargo/bin:$PATH"
+
+export PATH="/snap/bin:$PATH"
+
+# Inko
+export PATH="${PATH}:$HOME/.local/share/ienv/bin"
+
+export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"  # Added by n-install (see http://git.io/n-install-repo).
+
+export PATH="$HOME/n/bin:$PATH"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PATH="$HOME/.githubcli/bin:$PATH"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus"
+
+export PATH="$PATH:/var/lib/snapd/snap/bin"
+
+NPM_PACKAGES="${HOME}/.npm-packages"
+export PATH="$PATH:$NPM_PACKAGES/bin"
+# zprof
+
+PATH="/home/emacs/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/home/emacs/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/home/emacs/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/home/emacs/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/home/emacs/perl5"; export PERL_MM_OPT;
