@@ -20,3 +20,17 @@ inoremap jj <ESC>
 
 nmap <S-Enter> O<Esc>j
 nmap <CR> o<Esc>
+
+" maybe fix long markdown code fence snippets
+let g:markdown_minlines = 100
+let g:markdown_fenced_languages = ['c++=cpp', 'python']
+" fix too much memory error in large markdown files on macOS regex impl
+set mmp=5000
+
+call plug#begin()
+Plug 'morhetz/gruvbox'
+Plug 'ziglang/zig.vim'
+Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
+call plug#end()
+
+autocmd vimenter * ++nested colorscheme gruvbox
