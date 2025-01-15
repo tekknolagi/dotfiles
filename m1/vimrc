@@ -1,36 +1,333 @@
+"to reload:
+":so ~/.vimrc
+
+" set encoding=utf-8
+" set termencoding=utf-8
+
 set nocp
-syntax on
-filetype plugin indent on
-set number
 
-set background=dark
-
-set backspace=2
-set tabstop=2
-set shiftwidth=2
-set expandtab
-
-set wildmode=longest,list,full
-set wildmenu
-
-set splitbelow
-set splitright
-
-inoremap jj <ESC>
-
-nmap <S-Enter> O<Esc>j
-nmap <CR> o<Esc>
-
-" maybe fix long markdown code fence snippets
-let g:markdown_minlines = 100
-let g:markdown_fenced_languages = ['c++=cpp', 'python']
-" fix too much memory error in large markdown files on macOS regex impl
-set mmp=5000
+let g:python3_host_prog = '/usr/local/bin/python3'
+let g:loaded_python3_provider = 0
 
 call plug#begin()
 Plug 'morhetz/gruvbox'
-Plug 'ziglang/zig.vim'
-Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
+Plug 'tpope/vim-fugitive'
+" Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'thinca/vim-quickrun'
+" Plug 'karsai5/DES-Vim-Highlighting'
+
+" Plug 'dense-analysis/ale'
+" Plug 'vim-syntastic/syntastic'
+" Plug 'rust-lang/rust.vim'
+" Plug 'https://git.sr.ht/~soywod/himalaya-vim'
+" Plug 'tpope/vim-sensible'
+
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'lervag/vimtex'
+" 
+" " On-demand loading
+" Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+" Plug 'titzer/virgil', { 'rtp': 'bin/dev/virgil-vim' }
+" Plug 'tpope/vim-abolish'
+" Plug 'jpalardy/vim-slime'
+" Plug 'thinca/vim-quickrun'
+
+" Plug 'preservim/tagbar'
+" Plug 'github/copilot.vim'
+" Plug 'sotte/presenting.vim'
+" Plug 'kaarmu/typst.vim'
+" Plug 'kassio/neoterm'
+" Plug 'dstein64/vim-startuptime'
+Plug 'https://git.sr.ht/~soywod/himalaya-vim'
 call plug#end()
 
-autocmd vimenter * ++nested colorscheme gruvbox
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+"Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+if (empty($TMUX))
+  if (has("nvim"))
+    "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+  endif
+  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+  if (has("termguicolors"))
+    set termguicolors
+  endif
+endif
+
+syntax on
+"set mouse=nicr
+filetype plugin indent on
+set number
+" shows relative line numbers
+"set relativenumber
+set background=dark
+colorscheme gruvbox
+" let g:Powerline_symbols = "fancy"
+set backspace=2
+
+" show existing tab with 4 spaces width
+set tabstop=2
+" when indenting with '>', use 4 spaces width
+set shiftwidth=2
+" On pressing tab, insert 4 spaces
+set expandtab
+
+" difference between maps
+" http://stackoverflow.com/questions/3776117/what-is-the-difference-between-the-remap-noremap-nnoremap-and-vnoremap-mapping
+
+" format entire file and go back to previous cursor position
+map <F7> mzgg=G`z
+
+" set vim window's current directory to that of file being edited
+" autocmd BufEnter * silent! lcd %:p:h
+
+" command to set current directory to file's directory
+nnoremap ,cd :lcd %:p:h<CR>:pwd<CR>
+
+"map x mx{gq}`x
+"https://groups.google.com/forum/#!topic/vim_use/JDWnxE5EMwg
+"http://blog.ezyang.com/2010/03/vim-textwidth/
+"http://vim.wikia.com/wiki/Alternative_tab_navigation
+" setlocal textwidth=79 formatoptions+=aw
+
+"vim will remember where you left off in the file
+set viminfo='10,\"100,:20,%,n~/.viminfo
+
+" display the column number in the status bar
+set rulerformat=r%l,c%v
+set ruler
+
+" if g:colors_name == "solarized"
+"     " works for solarized:
+"     highlight ColorColumn ctermbg=235 guibg=#2c2d27
+" elseif g:colors_name == "gruvbox"
+"     " works for gruvbox:
+"     highlight ColorColumn ctermbg=237 guibg=#2c2d27
+" endif
+
+" also highlight columns 120 and onward
+let &colorcolumn="80,".join(range(120,999),",")
+
+" disable auto commenting
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+" auto-start nerdtree on vim startup
+" autocmd vimenter * NERDTree
+" Go to previous (last accessed) window (file, not NERDTree)
+" autocmd VimEnter * wincmd p
+
+" close vim if the only thing left open is nerdtree
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" use ag instead of ack if available on the system
+" if executable('ag')
+"   let g:ackprg = 'ag --vimgrep'
+" endif
+
+" change autocomplete options to be more normal
+set wildmode=longest,list,full
+set wildmenu
+
+" use more natural split directions
+set splitbelow
+set splitright
+
+" use C-p to search for files
+" set runtimepath^=~/.vim/bundle/ctrlp.vim
+
+" make ctrlp faster by using git ls-files
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
+
+" use zo to open a fold
+" use zc to close a fold
+" use za to toggle a fold
+" use zm to toggle folds of that level (?)
+
+" use :buffer, :ls to manage buffers
+
+" show buffer name even if only one window
+" set laststatus=2
+
+" use fzf in vim
+" set rtp+=/usr/local/opt/fzf
+
+" store backups and swap files in a dedicated directory
+set backupdir=~/.vim/backup//
+set directory=~/.vim/swp//
+
+set tw=79
+
+autocmd FileType *.txt setlocal preserveindent smartindent
+
+set lazyredraw
+
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
+let g:easy_align_delimiters = {}
+let g:easy_align_delimiters['d'] = {
+            \ 'pattern': ' \ze\S\+\s*[;=]',
+            \ 'left_margin': 0, 'right_margin': 0
+            \ }
+
+" "EasyAlign
+" " Start interactive EasyAlign in visual mode (e.g. vipga)
+" xmap ga <Plug>(EasyAlign)
+" 
+" " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+" nmap ga <Plug>(EasyAlign)<Paste>
+
+" Show newlines and tabs as special chars
+set list
+set listchars=tab:▸\ ,eol:¬
+
+" highlight trailing whitespace
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+
+" jj instead of escape
+inoremap jj <ESC>
+vnoremap . :norm.<CR>
+
+" For Bend/HVM
+" inoremap \\ λ
+
+"window split movements
+noremap <C-J> <C-W><C-J>
+noremap <C-K> <C-W><C-K>
+noremap <C-L> <C-W><C-L>
+noremap <C-H> <C-W><C-H>
+
+"tab commands
+"nnoremap <C-S-tab> :tabprevious<CR>
+"nnoremap <C-tab>   :tabnext<CR>
+"nnoremap <C-t>     :tabnew<CR>
+nnoremap <g-T>     :tabnext<CR>
+nnoremap <g-t>     :tabprevious<CR>
+inoremap <C-S-tab> <Esc>:tabprevious<CR>i
+inoremap <C-tab>   <Esc>:tabnext<CR>i
+inoremap <C-t>     <Esc>:tabnew<CR>
+
+" add newline below in normal mode without going to insert mode
+nmap <S-Enter> O<Esc>j
+nmap <CR> o<Esc>
+
+if has('nvim')
+    set shada='10,"100,:20,%,n~/.config/nvim/shada
+    tnoremap <Esc> <C-\><C-n>
+    tnoremap jj <C-\><C-n>
+endif
+
+" italicize things
+highlight Comment cterm=italic
+set t_ZH=[3m
+set t_ZR=[23m
+
+" synastic config
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
+
+" add git to statusline
+" set statusline+=%{fugitive#statusline()}
+
+let g:syntastic_ignore_files = ['\m\c\.ml[ly]$']
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+" vim-better-sml config
+au FileType sml setlocal conceallevel=2
+
+" set rtp+=~/.vim/runtime/ocp-indent-vim
+
+" Align GitHub-flavored Markdown tables
+au FileType markdown vmap <Leader><Bslash> :EasyAlign*<Bar><Enter>
+
+autocmd FileType ocaml setlocal shiftwidth=2 tabstop=2
+autocmd FileType reason setlocal shiftwidth=2 tabstop=2
+
+let g:jsx_ext_required = 0
+
+set ssop-=options    " do not store global and local values in a session
+set ssop-=folds      " do not store folds
+
+" to use SLIME:
+" make screen session with screen -S SESSION_NAME -t WINDOW_NAME
+" :SlimeConfig and set appropriate variables
+" C-c C-c to send text (like vip)
+
+" don't highlight after search
+" set nohlsearch
+
+set cursorline
+" set cursorcolumn
+
+" enable google calendar in calendar mode
+let g:calendar_google_calendar = 1
+let g:calendar_view = 'days'
+let g:calendar_first_day = 'monday'
+
+" load .vimrc from directory in which vim is opened
+" set exrc
+
+" au FileType commit-list0 nnoremap <buffer> Xx
+"     \ :vert belowright split
+"     \ |tag <cword>
+"     \ |vert resize 130<cr>
+
+" helps with markdown indentation
+set smartindent
+set autoindent
+
+" let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
+" let g:ctrlp_user_command = [
+"     \ '.git', 'cd %s && git ls-files . -co --exclude-standard',
+"     \ 'find %s -type f'
+"     \ ]
+" let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
+
+" let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files']
+" let g:ctrlp_user_command = ['.hg', 'hg --cwd %s locate -I .']
+
+" Multiple VCS's:
+let g:ctrlp_cmd = 'CtrlPMRU'
+let g:ctrlp_user_command = {
+  \ 'types': {
+    \ 1: ['.git', 'cd %s && git ls-files'],
+    \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+    \ },
+  \ 'fallback': 'find %s -type f'
+  \ }
+
+  " un fuck switch case indentation in C
+set cinoptions=l1
+
+" open file browser
+nnoremap <silent> - :Explore<CR>
+
+set shell=/usr/bin/zsh
+" au BufRead,BufNewFile *.dl             set filetype=dl
+
+" maybe fix long markdown code fence snippets
+let g:markdown_minlines = 100
+let g:markdown_fenced_languages = ['c', 'c++=cpp', 'python', 'go']
+
+let g:ale_linters = {
+\  'rust': ['analyzer'],
+\}
+
+" auto-continue bulleted lists in markdown mode
+au FileType markdown setl comments=b:*,b:-,b:+,n:>
+au FileType markdown setl formatoptions+=r
+
+let g:tex_flavor = 'latex'
+let g:slime_target = "neovim"
